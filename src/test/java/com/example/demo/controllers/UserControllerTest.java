@@ -66,6 +66,8 @@ class UserControllerTest {
                 .expectBody(UserEntities.class).value(userEntities1 -> {
             Assert.assertEquals(userEntities.getId(), userEntities1.getId());
         });
+        Mockito.when(this.userRepository.findById(Mockito.anyString())).thenReturn(Mono.empty());
+        this.webTestClient.get().uri("/users/x/detail").exchange().expectStatus().is4xxClientError();
     }
 
     @Test
@@ -84,6 +86,8 @@ class UserControllerTest {
                 .exchange().expectStatus().is2xxSuccessful().expectBody(UserEntities.class).value(userEntities1 -> {
             Assert.assertEquals(userEntities.getUsername(), "ajo");
         });
+        Mockito.when(this.userRepository.findById(Mockito.anyString())).thenReturn(Mono.empty());
+        this.webTestClient.get().uri("/users/x/update").exchange().expectStatus().is4xxClientError();
     }
 
     @Test
