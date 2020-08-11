@@ -24,11 +24,7 @@ public class UserModel {
     }
 
     public Mono<UserEntities> getUserById(String userId) {
-        return this.userRepository.findById(userId).map(userEntities -> {
-            return userEntities;
-        }).onErrorMap(throwable -> {
-            return new NotFoundException("user not found");
-        });
+        return this.userRepository.findById(userId);
     }
 
     public Mono<UserEntities> addNewUser(UserEntities userEntities) {

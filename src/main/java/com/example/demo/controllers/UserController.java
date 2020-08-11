@@ -30,8 +30,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}/detail")
-    public Mono<UserEntities> getUserDetaill(@PathVariable("id") String id) {
-        return this.userModel.getUserById(id);
+    public Mono<ResponseEntity<UserEntities>> getUserDetaill(@PathVariable("id") String id) {
+        return this.userModel.getUserById(id).map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}/update")
