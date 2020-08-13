@@ -2,8 +2,8 @@ package com.example.demo.models;
 
 import com.example.demo.db.UserEntities;
 import com.example.demo.db.UserRepository;
-import com.example.demo.errorHandler.NotFoundException;
 
+import com.example.demo.errorHandler.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -40,7 +40,9 @@ public class UserModel {
                 });
     }
 
-    public Mono<Void> deleteUser(String id) {
-        return this.userRepository.deleteById(id);
+    public Mono<String> deleteUser(String id) {
+        return this.userRepository.findById(id).flatMap(userEntities -> {
+            return this.userRepository.deleteById(userEntities.getId()).thenReturn("ok");
+        }).switchIfEmpty(Mono.error(new NotFoundException("user not found")));
     }
 }

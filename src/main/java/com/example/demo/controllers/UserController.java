@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.db.UserEntities;
+import com.example.demo.errorHandler.NotFoundException;
 import com.example.demo.models.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,7 +32,7 @@ public class UserController {
 
     @GetMapping("/{id}/detail")
     public Mono<ResponseEntity<UserEntities>> getUserDetaill(@PathVariable("id") String id) {
-        return this.userModel.getUserById(id).map(ResponseEntity::ok)
+        return this.userModel.getUserById(id).map(body -> ResponseEntity.ok(body))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
@@ -44,7 +45,11 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/delete")
-    public Mono<Void> deleteUser(@PathVariable("id") String id) {
-        return this.userModel.deleteUser(id);
+    public Mono<ResponseEntity<String>> deleteUser(@PathVariable("id") String id) {
+        return this.userModel.deleteUser(id).map(s -> {
+            return ResponseEntity.ok(s);
+        }).onErrorResume(NotFoundException.class, e -> {
+            return Mono.just(ResponseEntity.badRequest().body(e.getMessage()));
+        });
     }
 }
