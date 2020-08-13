@@ -26,11 +26,11 @@ class UserModelTest {
 
     @Test
     void listUsers() {
-        UserEntities u1=this.generateUserEntities();
-        UserEntities u2=this.generateUserEntities();
-        Flux<UserEntities> entitiesFlux=Flux.just(u1,u2);
+        UserEntities u1 = this.generateUserEntities();
+        UserEntities u2 = this.generateUserEntities();
+        Flux<UserEntities> entitiesFlux = Flux.just(u1, u2);
         Mockito.when(this.userRepository.findAll()).thenReturn(entitiesFlux);
-        StepVerifier.create(this.userModel.listUsers()).expectNext(u1,u2).verifyComplete();
+        StepVerifier.create(this.userModel.listUsers()).expectNext(u1, u2).verifyComplete();
     }
 
     @Test
@@ -75,6 +75,24 @@ class UserModelTest {
         StepVerifier.create(this.userModel.deleteUser(Mockito.anyString()))
                 .expectNext("ok")
                 .verifyComplete();
+    }
+
+    @Test
+    void streamUsers() {
+        UserEntities u1 = this.generateUserEntities();
+        UserEntities u2 = this.generateUserEntities();
+        UserEntities u3 = this.generateUserEntities();
+        UserEntities u4 = this.generateUserEntities();
+        UserEntities u5 = this.generateUserEntities();
+
+        Flux<UserEntities> entitiesFlux = Flux.just(u1, u2, u3, u4, u5);
+        Mockito.when(this.userRepository.findAll()).thenReturn(entitiesFlux);
+        StepVerifier.create(this.userModel.streamUsers())
+                .expectNext(u1).expectNext(u2)
+                .expectNext(u3).expectNext(u4)
+                .expectNext(u5).verifyComplete();
+
+
     }
 
     private UserEntities generateUserEntities() {

@@ -43,6 +43,13 @@ class UserControllerTest {
     }
 
     @Test
+    void streamUsers() {
+        Flux<UserEntities> flux = Flux.just(this.generateUserEntities(), this.generateUserEntities());
+        Mockito.when(this.userRepository.findAll()).thenReturn(flux);
+        this.webTestClient.get().uri("/users/stream").exchange().expectStatus().is2xxSuccessful();
+    }
+
+    @Test
     void addNewUser() {
         UserEntities userEntities = this.generateUserEntities();
         Mono<UserEntities> monoUserEntities = Mono.just(userEntities);
@@ -94,6 +101,11 @@ class UserControllerTest {
     void deleteUser() {
         Mockito.when(this.userRepository.findById(Mockito.anyString())).thenReturn(Mono.empty());
         this.webTestClient.delete().uri("/users/x/delete").exchange().expectStatus().is4xxClientError();
+
+        UserEntities u1 = this.generateUserEntities();
+        Mockito.when(this.userRepository.findById(Mockito.anyString())).thenReturn(Mono.just(u1));
+        Mockito.when(this.userRepository.deleteById(Mockito.anyString())).thenReturn(Mono.empty());
+        this.webTestClient.delete().uri("/users/x/delete").exchange().expectStatus().is2xxSuccessful();
     }
 
 

@@ -5,6 +5,7 @@ import com.example.demo.errorHandler.NotFoundException;
 import com.example.demo.models.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -23,6 +24,11 @@ public class UserController {
     @GetMapping("/list")
     public Flux<UserEntities> getALlUser() {
         return this.userModel.listUsers();
+    }
+
+    @GetMapping(value = "stream", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+    public Flux<UserEntities> streamUsers() {
+        return this.userModel.streamUsers();
     }
 
     @PostMapping("/add")
@@ -52,4 +58,6 @@ public class UserController {
             return Mono.just(ResponseEntity.badRequest().body(e.getMessage()));
         });
     }
+
+
 }

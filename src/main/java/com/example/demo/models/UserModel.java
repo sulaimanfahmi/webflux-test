@@ -9,11 +9,19 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
 @Service
 public class UserModel {
 
     @Autowired
     private final UserRepository userRepository;
+
+    public Flux<UserEntities> streamUsers() {
+        Flux<Long> interval = Flux.interval(Duration.ofSeconds(1));
+        Flux<UserEntities> entitiesFlux = Flux.from(this.userRepository.findAll());
+        return Flux.zip(entitiesFlux, interval, (key, value) -> key);
+    }
 
     public UserModel(UserRepository userRepository) {
         this.userRepository = userRepository;
