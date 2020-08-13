@@ -92,8 +92,8 @@ class UserControllerTest {
 
     @Test
     void deleteUser() {
-        Mockito.when(this.userRepository.deleteById(Mockito.anyString())).thenReturn(Mono.empty());
-        this.webTestClient.delete().uri("/users/x/delete").exchange().expectStatus().is2xxSuccessful();
+        Mockito.when(this.userRepository.findById(Mockito.anyString())).thenReturn(Mono.empty());
+        this.webTestClient.delete().uri("/users/x/delete").exchange().expectStatus().is4xxClientError();
     }
 
 
